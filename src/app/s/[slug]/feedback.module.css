@@ -41,11 +41,7 @@
   height: 48px;
   stroke: #ddd;
   fill: #ddd;
-}
-
-.starIconActive {
-  stroke: #ffc107;
-  fill: #ffc107;
+  pointer-events: none;
 }
 
 .formArea {
@@ -85,6 +81,19 @@
   font-size: 1.1rem;
   font-weight: bold;
   cursor: pointer;
+}
+
+.redeemButton {
+  width: 100%;
+  padding: 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1rem;
 }
 
 .redirectArea {
@@ -127,7 +136,85 @@
   margin: 1rem 0;
 }
 
+.detailRatingGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.detailRatingItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detailStars {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.detailStarButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  transition: transform 0.1s ease;
+}
+
+.detailStarButton:active {
+  transform: scale(1.1);
+}
+
+.detailStarIcon {
+  stroke: #ddd;
+  fill: #ddd;
+  pointer-events: none;
+}
+
+.requiredLabel {
+  font-size: 0.75rem;
+  color: #dc3545;
+  margin-left: 0.5rem;
+  font-weight: normal;
+}
+
+.disclaimer {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.footer {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid #eee;
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.badgeArea {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #666;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.starIconActive {
+  stroke: #ffc107 !important;
+  fill: #ffc107 !important;
 }

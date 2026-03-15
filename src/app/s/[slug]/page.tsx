@@ -2,6 +2,7 @@ import { supabase } from "@/lib/supabase";
 import FeedbackForm from "./FeedbackForm";
 import styles from "./feedback.module.css";
 import { notFound } from "next/navigation";
+import { ShieldCheck, Lock } from "lucide-react";
 
 export default async function FeedbackPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -24,6 +25,20 @@ export default async function FeedbackPage({ params }: { params: Promise<{ slug:
       </header>
 
       <FeedbackForm tenant={tenant} />
+
+      <footer className={styles.footer}>
+        <div className={styles.badgeArea}>
+          <div className={styles.badge}>
+            <ShieldCheck size={16} />
+            <span>SSL暗号化通信</span>
+          </div>
+          <div className={styles.badge}>
+            <Lock size={16} />
+            <span>個人情報の厳重管理</span>
+          </div>
+        </div>
+        <p>© {new Date().getFullYear()} ReviewBoost Japan - 安心の日本語対応サポート</p>
+      </footer>
     </div>
   );
 }

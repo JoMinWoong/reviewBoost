@@ -2,6 +2,8 @@ import { supabase } from '@/lib/supabase';
 import styles from './dashboard.module.css';
 import { Star, MessageSquare, TrendingUp } from 'lucide-react';
 
+export const revalidate = 0;
+
 export default async function DashboardPage() {
   // Fetch feedback for all tenants (for now, eventually filter by merchant)
   const { data: feedback, error } = await supabase
@@ -77,7 +79,16 @@ export default async function DashboardPage() {
                     ))}
                   </div>
                 </td>
-                <td>{f.comment || '-'}</td>
+                <td>
+                  {f.comment || '-'}
+                  {(f.staff_rating || f.cleanliness_rating || f.taste_rating) && (
+                    <div className={styles.detailSummary}>
+                      {f.staff_rating && <span>接客:{f.staff_rating} </span>}
+                      {f.cleanliness_rating && <span>清潔:{f.cleanliness_rating} </span>}
+                      {f.taste_rating && <span>味:{f.taste_rating} </span>}
+                    </div>
+                  )}
+                </td>
                 <td>{f.customer_name || '匿名'}</td>
               </tr>
             ))}
