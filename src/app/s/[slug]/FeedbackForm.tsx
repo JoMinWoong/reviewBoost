@@ -16,8 +16,9 @@ export default function FeedbackForm({ tenant }: { tenant: any }) {
   const [rating, setRating] = useState<number>(0);
   const [hover, setHover] = useState<number>(0);
   const [comment, setComment] = useState('');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [nickname, setNickname] = useState('');
+  const [gender, setGender] = useState<number | ''>('');
+  const [ageRange, setAgeRange] = useState<number | ''>('');
   const [staffRating, setStaffRating] = useState<number>(0);
   const [cleanlinessRating, setCleanlinessRating] = useState<number>(0);
   const [tasteRating, setTasteRating] = useState<number>(0);
@@ -47,8 +48,9 @@ export default function FeedbackForm({ tenant }: { tenant: any }) {
         staff_rating: extra.staff_rating,
         cleanliness_rating: extra.cleanliness_rating,
         taste_rating: extra.taste_rating,
-        customer_name: name,
-        customer_email: email,
+        nickname: nickname,
+        gender: gender,
+        age_range: ageRange,
         metadata: extra,
       });
 
@@ -110,6 +112,14 @@ export default function FeedbackForm({ tenant }: { tenant: any }) {
             </>
           )}
         </div>
+
+        <div className={styles.ctaArea}>
+          <h3>最新情報はこちらから</h3>
+          <p>新メニューや限定クーポンをInstagramで配信中！</p>
+          <a href="#" className={styles.ctaButton}>
+            Instagramをチェックする
+          </a>
+        </div>
       </div>
     );
   }
@@ -139,6 +149,14 @@ export default function FeedbackForm({ tenant }: { tenant: any }) {
               <p className={styles.couponDescription}>次回ドリンク1杯無料</p>
             </>
           )}
+        </div>
+
+        <div className={styles.ctaArea}>
+          <h3>最新情報はこちらから</h3>
+          <p>新メニューや限定クーポンをInstagramで配信中！</p>
+          <a href="#" className={styles.ctaButton}>
+            Instagramをチェックする
+          </a>
         </div>
       </div>
     );
@@ -233,23 +251,44 @@ export default function FeedbackForm({ tenant }: { tenant: any }) {
           />
           <input
             className={styles.inputField}
-            placeholder="お名前（任意）"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            placeholder="ニックネーム（最大10文字）"
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value.slice(0, 10))}
+            maxLength={10}
           />
-          <input
-            className={styles.inputField}
-            placeholder="メールアドレス（任意）"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          <div className={styles.optionalGrid}>
+            <select 
+              className={styles.selectField} 
+              value={gender} 
+              onChange={(e) => setGender(e.target.value === '' ? '' : parseInt(e.target.value))}
+            >
+              <option value="">性別（任意）</option>
+              <option value="0">男性</option>
+              <option value="1">女性</option>
+              <option value="2">その他</option>
+            </select>
+            <select 
+              className={styles.selectField} 
+              value={ageRange} 
+              onChange={(e) => setAgeRange(e.target.value === '' ? '' : parseInt(e.target.value))}
+            >
+              <option value="">年代（任意）</option>
+              <option value="1">10代</option>
+              <option value="2">20代</option>
+              <option value="3">30代</option>
+              <option value="4">40代</option>
+              <option value="5">50代</option>
+              <option value="6">60代以上</option>
+            </select>
+          </div>
           <button
             className={styles.submitButton}
             onClick={() => submitFeedback(rating, comment, {
               staff_rating: staffRating,
               cleanliness_rating: cleanlinessRating,
               taste_rating: tasteRating,
+              gender,
+              ageRange
             })}
             disabled={loading}
           >

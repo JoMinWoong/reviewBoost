@@ -33,7 +33,7 @@
 }
 
 .starButton:active {
-  transform: scale(1.2);
+  transform: scale(1.4);
 }
 
 .starIcon {
@@ -42,6 +42,7 @@
   stroke: #ddd;
   fill: #ddd;
   pointer-events: none;
+  transition: transform 0.2s ease, fill 0.2s ease, stroke 0.2s ease;
 }
 
 .formArea {
@@ -69,6 +70,24 @@
   font-size: 1rem;
   margin-bottom: 1rem;
   box-sizing: border-box;
+}
+
+.optionalGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.selectField {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  background-color: white;
+  color: #333;
 }
 
 .submitButton {
@@ -136,6 +155,46 @@
   margin: 1rem 0;
 }
 
+.couponDescription {
+  font-size: 1rem;
+  color: #666;
+}
+
+.ctaArea {
+  margin-top: 3rem;
+  padding: 1.5rem;
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.ctaArea h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.ctaArea p {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.ctaButton {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: #e4405f; /* Instagram brand color */
+  color: white;
+  border-radius: 8px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.ctaButton:hover {
+  opacity: 0.8;
+}
+
 .detailRatingGrid {
   display: flex;
   flex-direction: column;
@@ -194,12 +253,64 @@
   font-size: 0.8rem;
   color: #999;
 }
-
 .badgeArea {
   display: flex;
   justify-content: center;
   gap: 1.5rem;
   margin-top: 1rem;
+}
+
+/* Skeleton Screens */
+.skeletonTitle {
+  height: 2rem;
+  width: 250px;
+  background-color: #eee;
+  border-radius: 4px;
+  margin: 0 auto 1rem;
+}
+
+.skeletonText {
+  height: 1rem;
+  width: 180px;
+  background-color: #eee;
+  border-radius: 4px;
+  margin: 0 auto;
+}
+
+.skeletonStar {
+  width: 48px;
+  height: 48px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+.formSkeleton {
+  height: 300px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  margin-top: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 .badge {
@@ -217,4 +328,11 @@
 .starIconActive {
   stroke: #ffc107 !important;
   fill: #ffc107 !important;
+  animation: starPop 0.3s ease-out;
+}
+
+@keyframes starPop {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
 }

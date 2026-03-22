@@ -1,0 +1,131 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.header {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 1rem;
+}
+
+.backLink {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.statCard {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  border: 1px solid #eee;
+}
+
+.statHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.statValue {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.mainGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.fullRow {
+  grid-column: 1 / -1;
+}
+
+.card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  border: 1px solid #eee;
+}
+
+.card h2 {
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.chartContainer {
+  height: 300px;
+  width: 100%;
+}
+
+.radarContainer {
+  height: 350px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .mainGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .chartContainer {
+    height: 250px;
+  }
+  
+  .radarContainer {
+    height: 300px;
+  }
+}
+
+/* Colors from dashboard.module.css */
+.positive { color: #28a745; }
+.attention { color: #dc3545; }
+
+/* Dark mode support */
+:global(.dark-dashboard) .container {
+  color: #e0e0e0;
+}
+
+:global(.dark-dashboard) .statCard,
+:global(.dark-dashboard) .card {
+  background-color: #1e1e1e;
+  border-color: #333;
+}
+
+:global(.dark-dashboard) .header {
+  border-color: #333;
+}
+
+:global(.dark-dashboard) .card h2 {
+  color: #fff;
+}

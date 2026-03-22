@@ -1,6 +1,9 @@
 import { supabase } from '@/lib/supabase';
 import styles from './dashboard.module.css';
 import { Star, MessageSquare, TrendingUp } from 'lucide-react';
+import Link from 'next/link';
+import FeedbackList from './FeedbackList';
+import ThemeToggle from './ThemeToggle';
 
 export const revalidate = 0;
 
@@ -25,6 +28,7 @@ export default async function DashboardPage() {
     <div className={styles.container}>
       <header className={styles.header}>
         <h1>店舗管理ダッシュボード</h1>
+        <ThemeToggle />
       </header>
 
       <div className={styles.statsGrid}>
@@ -52,48 +56,14 @@ export default async function DashboardPage() {
       </div>
 
       <section className={styles.feedbackSection}>
-        <h2>最新のフィードバック</h2>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>日付</th>
-              <th>店舗</th>
-              <th>評価</th>
-              <th>コメント</th>
-              <th>顧客情報</th>
-            </tr>
-          </thead>
-          <tbody>
-            {feedback.map((f) => (
-              <tr key={f.id} className={f.rating <= 3 ? styles.alertRow : ''}>
-                <td>{new Date(f.created_at).toLocaleDateString('ja-JP')}</td>
-                <td>{f.tenants?.name}</td>
-                <td>
-                  <div className={styles.ratingStars}>
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <Star 
-                        key={s} 
-                        className={s <= f.rating ? styles.starFilled : styles.starEmpty} 
-                        size={16}
-                      />
-                    ))}
-                  </div>
-                </td>
-                <td>
-                  {f.comment || '-'}
-                  {(f.staff_rating || f.cleanliness_rating || f.taste_rating) && (
-                    <div className={styles.detailSummary}>
-                      {f.staff_rating && <span>接客:{f.staff_rating} </span>}
-                      {f.cleanliness_rating && <span>清潔:{f.cleanliness_rating} </span>}
-                      {f.taste_rating && <span>味:{f.taste_rating} </span>}
-                    </div>
-                  )}
-                </td>
-                <td>{f.customer_name || '匿名'}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <h2 style={{ margin: 0 }}>最新のフィードバック</h2>
+          <Link href="/dashboard/analysis" className={styles.analysisLink}>
+            <TrendingUp size={18} style={{ marginRight: '4px' }} />
+            詳細分析レポートを表示
+          </Link>
+        </div>
+        <FeedbackList feedback={feedback} />
       </section>
     </div>
   );
