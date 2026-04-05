@@ -9,7 +9,7 @@ export default async function FeedbackPage({ params }: { params: Promise<{ slug:
 
   const { data: tenant, error } = await supabase
     .from('tenants')
-    .select('*')
+    .select('*, business_categories(*)')
     .eq('slug', slug)
     .single();
 

@@ -23,7 +23,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #666;
+  color: #000;
   transition: all 0.2s;
 }
 
@@ -67,7 +67,7 @@
 
 :global(.dark-dashboard) .themeToggle {
   border-color: #444;
-  color: #aaa;
+  color: #eee;
 }
 
 :global(.dark-dashboard) .themeToggle:hover {
@@ -98,7 +98,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #666;
+  color: #000;
   font-size: 0.9rem;
   margin-bottom: 0.5rem;
 }
@@ -150,7 +150,7 @@
 .table th {
   background-color: #f8f9fa;
   font-weight: bold;
-  color: #333;
+  color: #000;
 }
 
 .ratingStars {
@@ -196,9 +196,17 @@
   border-left: 4px solid #dc3545;
 }
 
+.positiveRow {
+  background-color: #f6fff8;
+}
+
+.positiveRow td {
+  border-left: 4px solid #28a745;
+}
+
 .detailSummary {
   font-size: 0.8rem;
-  color: #666;
+  color: #000;
   margin-top: 0.5rem;
   background-color: #f1f3f5;
   padding: 0.25rem 0.5rem;
@@ -210,6 +218,7 @@
 
 .feedbackContainer {
   margin-top: 1rem;
+  color: #000;
 }
 
 .controls {
@@ -229,7 +238,7 @@
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: #adb5bd;
+  color: #666;
 }
 
 .searchInput {
@@ -274,7 +283,7 @@
 }
 
 .sortIcon {
-  color: #ced4da;
+  color: #444;
 }
 
 .sortIconActive {
@@ -319,6 +328,11 @@
     background-color: #fff8f8;
   }
 
+  .positiveCard {
+    border-left: 4px solid #28a745;
+    background-color: #f6fff8;
+  }
+
   .cardHeader {
     display: flex;
     justify-content: space-between;
@@ -328,12 +342,12 @@
 
   .cardDate {
     font-size: 0.85rem;
-    color: #666;
+    color: #000;
   }
 
   .cardTenant {
     font-weight: bold;
-    color: #333;
+    color: #000;
   }
 
   .cardBody {
@@ -357,9 +371,39 @@
     padding-top: 0.75rem;
     border-top: 1px solid #f1f3f5;
   }
+.paginationWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.loadMoreButton {
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  color: #007bff;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: auto;
+}
+
+.loadMoreButton:hover {
+  background-color: #f8f9fa;
+  border-color: #007bff;
+}
+
+@media (max-width: 768px) {
+  .loadMoreButton {
+    width: 100%;
+  }
+}
+
 .cardCustomer {
   font-size: 0.85rem;
-  color: #666;
+  color: #000;
   font-style: italic;
 }
 

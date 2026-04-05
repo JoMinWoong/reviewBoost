@@ -13,8 +13,8 @@ interface FeedbackItem {
   gender: number | null;
   age_range: number | null;
   staff_rating?: number;
-  cleanliness_rating?: number;
-  taste_rating?: number;
+  atmosphere_rating?: number;
+  quality_rating?: number;
   metadata?: any;
   tenants: {
     name: string;
@@ -31,6 +31,8 @@ export default function FeedbackList({ feedback }: FeedbackListProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortField, setSortField] = useState<SortField>('created_at');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+
+  const [pageSize, setPageSize] = useState(10);
 
   const filteredAndSortedFeedback = useMemo(() => {
     return feedback
@@ -51,6 +53,14 @@ export default function FeedbackList({ feedback }: FeedbackListProps) {
         return sortOrder === 'asc' ? comparison : -comparison;
       });
   }, [feedback, searchTerm, sortField, sortOrder]);
+
+  const displayedFeedback = useMemo(() => {
+    return filteredAndSortedFeedback.slice(0, pageSize);
+  }, [filteredAndSortedFeedback, pageSize]);
+
+  const loadMore = () => {
+    setPageSize((prev) => prev + 10);
+  };
 
   const toggleSort = (field: SortField) => {
     if (sortField === field) {
@@ -106,8 +116,11 @@ export default function FeedbackList({ feedback }: FeedbackListProps) {
             </tr>
           </thead>
           <tbody>
-            {filteredAndSortedFeedback.map((f) => (
-              <tr key={f.id} className={f.rating <= 3 ? styles.alertRow : ''}>
+            {displayedFeedback.map((f) => (
+              <tr 
+                key={f.id} 
+                className={f.rating <= 3 ? styles.alertRow : f.rating >= 4 ? styles.positiveRow : ''}
+              >
                 <td>{new Date(f.created_at).toLocaleDateString('ja-JP')}</td>
                 <td>{f.tenants?.name}</td>
                 <td>
@@ -130,11 +143,11 @@ export default function FeedbackList({ feedback }: FeedbackListProps) {
                 </td>
                 <td>
                   {f.comment || '-'}
-                  {(f.staff_rating || f.cleanliness_rating || f.taste_rating) && (
+                  {(f.staff_rating || f.atmosphere_rating || f.quality_rating) && (
                     <div className={styles.detailSummary}>
                       {f.staff_rating && <span>接客:{f.staff_rating} </span>}
-                      {f.cleanliness_rating && <span>清潔:{f.cleanliness_rating} </span>}
-                      {f.taste_rating && <span>味:{f.taste_rating} </span>}
+                      {f.atmosphere_rating && <span>雰囲気:{f.atmosphere_rating} </span>}
+                      {f.quality_rating && <span>品質:{f.quality_rating} </span>}
                     </div>
                   )}
                 </td>
@@ -170,8 +183,11 @@ export default function FeedbackList({ feedback }: FeedbackListProps) {
 
       {/* Mobile view: Cards */}
       <div className={styles.mobileCards}>
-        {filteredAndSortedFeedback.map((f) => (
-          <div key={f.id} className={`${styles.feedbackCard} ${f.rating <= 3 ? styles.alertCard : ''}`}>
+        {displayedFeedback.map((f) => (
+          <div 
+            key={f.id} 
+            className={`${styles.feedbackCard} ${f.rating <= 3 ? styles.alertCard : f.rating >= 4 ? styles.positiveCard : ''}`}
+          >
             <div className={styles.cardHeader}>
               <span className={styles.cardDate}>{new Date(f.created_at).toLocaleDateString('ja-JP')}</span>
               <span className={styles.cardTenant}>{f.tenants?.name}</span>
@@ -196,11 +212,11 @@ export default function FeedbackList({ feedback }: FeedbackListProps) {
                 </div>
               </div>
               <p className={styles.cardComment}>{f.comment || 'コメントなし'}</p>
-              {(f.staff_rating || f.cleanliness_rating || f.taste_rating) && (
+              {(f.staff_rating || f.atmosphere_rating || f.quality_rating) && (
                 <div className={styles.detailSummary}>
                   {f.staff_rating && <span>接客:{f.staff_rating} </span>}
-                  {f.cleanliness_rating && <span>清潔:{f.cleanliness_rating} </span>}
-                  {f.taste_rating && <span>味:{f.taste_rating} </span>}
+                  {f.atmosphere_rating && <span>雰囲気:{f.atmosphere_rating} </span>}
+                  {f.quality_rating && <span>品質:{f.quality_rating} </span>}
                 </div>
               )}
             </div>
@@ -233,6 +249,15 @@ export default function FeedbackList({ feedback }: FeedbackListProps) {
           </div>
         ))}
       </div>
+
+      {/* Pagination: Load More */}
+      {pageSize < filteredAndSortedFeedback.length && (
+        <div className={styles.paginationWrapper}>
+          <button onClick={loadMore} className={styles.loadMoreButton}>
+            もっと読み込む ({pageSize} / {filteredAndSortedFeedback.length})
+          </button>
+        </div>
+      )}
     </div>
   );
 }

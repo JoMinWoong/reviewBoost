@@ -15,8 +15,8 @@ interface FeedbackItem {
   created_at: string;
   rating: number;
   staff_rating?: number;
-  cleanliness_rating?: number;
-  taste_rating?: number;
+  atmosphere_rating?: number;
+  quality_rating?: number;
 }
 
 interface AnalysisDashboardProps {
@@ -35,14 +35,14 @@ export default function AnalysisDashboard({ feedback }: AnalysisDashboardProps) 
 
     const avgRating = feedback.reduce((acc, curr) => acc + curr.rating, 0) / feedback.length;
     const avgStaff = feedback.filter(f => f.staff_rating).reduce((acc, curr) => acc + (curr.staff_rating || 0), 0) / feedback.filter(f => f.staff_rating).length || 0;
-    const avgClean = feedback.filter(f => f.cleanliness_rating).reduce((acc, curr) => acc + (curr.cleanliness_rating || 0), 0) / feedback.filter(f => f.cleanliness_rating).length || 0;
-    const avgTaste = feedback.filter(f => f.taste_rating).reduce((acc, curr) => acc + (curr.taste_rating || 0), 0) / feedback.filter(f => f.taste_rating).length || 0;
+    const avgAtmosphere = feedback.filter(f => f.atmosphere_rating).reduce((acc, curr) => acc + (curr.atmosphere_rating || 0), 0) / feedback.filter(f => f.atmosphere_rating).length || 0;
+    const avgQuality = feedback.filter(f => f.quality_rating).reduce((acc, curr) => acc + (curr.quality_rating || 0), 0) / feedback.filter(f => f.quality_rating).length || 0;
 
     // Radar Chart Data (Snowflake)
     const radarData = [
       { subject: '接客 (Staff)', A: avgStaff, fullMark: 5 },
-      { subject: '清潔 (Clean)', A: avgClean, fullMark: 5 },
-      { subject: '味 (Taste)', A: avgTaste, fullMark: 5 },
+      { subject: '雰囲気 (Atmos)', A: avgAtmosphere, fullMark: 5 },
+      { subject: '品質 (Quality)', A: avgQuality, fullMark: 5 },
       { subject: '総合 (Overall)', A: avgRating, fullMark: 5 },
       { subject: '鮮度 (Recency)', A: 4.5, fullMark: 5 }, // Placeholder for volume trend
     ];
@@ -57,8 +57,8 @@ export default function AnalysisDashboard({ feedback }: AnalysisDashboardProps) 
     // Category Comparison
     const categories = [
       { name: '接客', score: parseFloat(avgStaff.toFixed(1)) },
-      { name: '清潔', score: parseFloat(avgClean.toFixed(1)) },
-      { name: '味', score: parseFloat(avgTaste.toFixed(1)) },
+      { name: '雰囲気', score: parseFloat(avgAtmosphere.toFixed(1)) },
+      { name: '品質/技術', score: parseFloat(avgQuality.toFixed(1)) },
     ];
 
     // Trend (Daily grouping)

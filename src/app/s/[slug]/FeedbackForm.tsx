@@ -20,11 +20,18 @@ export default function FeedbackForm({ tenant }: { tenant: any }) {
   const [gender, setGender] = useState<number | ''>('');
   const [ageRange, setAgeRange] = useState<number | ''>('');
   const [staffRating, setStaffRating] = useState<number>(0);
-  const [cleanlinessRating, setCleanlinessRating] = useState<number>(0);
-  const [tasteRating, setTasteRating] = useState<number>(0);
+  const [atmosphereRating, setAtmosphereRating] = useState<number>(0);
+  const [qualityRating, setQualityRating] = useState<number>(0);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [redeemed, setRedeemed] = useState(false);
+
+  const category = tenant.business_categories || {};
+  const labels = {
+    staff: category.staff_label || '接客 (Staff)',
+    atmosphere: category.atmosphere_label || '雰囲気 (Atmosphere)',
+    quality: category.quality_label || '品質 (Quality)'
+  };
 
   const handleRatingClick = (r: number) => {
     setRating(r);
@@ -33,8 +40,8 @@ export default function FeedbackForm({ tenant }: { tenant: any }) {
   const submitFeedback = async (r: number, c: string, extra: any = {}) => {
     // Validation: Require detail ratings for 1-3 stars
     if (r <= 3) {
-      if (!extra.staff_rating || !extra.cleanliness_rating || !extra.taste_rating) {
-        alert('恐れ入りますが、接客、清潔感、味のすべての評価を選択してください。');
+      if (!extra.staff_rating || !extra.atmosphere_rating || !extra.quality_rating) {
+        alert(`恐れ入りますが、${labels.staff}、${labels.atmosphere}、${labels.quality}のすべての評価を選択してください。`);
         return;
       }
     }
@@ -46,12 +53,15 @@ export default function FeedbackForm({ tenant }: { tenant: any }) {
         rating: r,
         comment: c,
         staff_rating: extra.staff_rating,
-        cleanliness_rating: extra.cleanliness_rating,
-        taste_rating: extra.taste_rating,
+        atmosphere_rating: extra.atmosphere_rating,
+        quality_rating: extra.quality_rating,
         nickname: nickname,
         gender: gender,
         age_range: ageRange,
-        metadata: extra,
+        metadata: {
+          ...extra,
+          category: tenant.category
+        },
       });
 
       if (error) throw error;
@@ -188,7 +198,7 @@ export default function FeedbackForm({ tenant }: { tenant: any }) {
 
           <div className={styles.detailRatingGrid}>
             <div className={styles.detailRatingItem}>
-              <span>接客 (Staff) {rating <= 3 && <span className={styles.requiredLabel}>*必須</span>}</span>
+              <span>{labels.staff} {rating <= 3 && <span className={styles.requiredLabel}>*必須</span>}</span>
               <div className={styles.detailStars}>
                 {[1, 2, 3, 4, 5].map((s) => (
                   <button
@@ -206,36 +216,36 @@ export default function FeedbackForm({ tenant }: { tenant: any }) {
               </div>
             </div>
             <div className={styles.detailRatingItem}>
-              <span>清潔感 (Cleanliness) {rating <= 3 && <span className={styles.requiredLabel}>*必須</span>}</span>
+              <span>{labels.atmosphere} {rating <= 3 && <span className={styles.requiredLabel}>*必須</span>}</span>
               <div className={styles.detailStars}>
                 {[1, 2, 3, 4, 5].map((s) => (
                   <button
                     key={s}
                     type="button"
                     className={styles.detailStarButton}
-                    onClick={() => setCleanlinessRating(s)}
+                    onClick={() => setAtmosphereRating(s)}
                   >
                     <Star
                       size={24}
-                      className={`${styles.detailStarIcon} ${cleanlinessRating >= s ? styles.starIconActive : ''}`}
+                      className={`${styles.detailStarIcon} ${atmosphereRating >= s ? styles.starIconActive : ''}`}
                     />
                   </button>
                 ))}
               </div>
             </div>
             <div className={styles.detailRatingItem}>
-              <span>味・品質 (Taste/Quality) {rating <= 3 && <span className={styles.requiredLabel}>*必須</span>}</span>
+              <span>{labels.quality} {rating <= 3 && <span className={styles.requiredLabel}>*必須</span>}</span>
               <div className={styles.detailStars}>
                 {[1, 2, 3, 4, 5].map((s) => (
                   <button
                     key={s}
                     type="button"
                     className={styles.detailStarButton}
-                    onClick={() => setTasteRating(s)}
+                    onClick={() => setQualityRating(s)}
                   >
                     <Star
                       size={24}
-                      className={`${styles.detailStarIcon} ${tasteRating >= s ? styles.starIconActive : ''}`}
+                      className={`${styles.detailStarIcon} ${qualityRating >= s ? styles.starIconActive : ''}`}
                     />
                   </button>
                 ))}
@@ -285,8 +295,8 @@ export default function FeedbackForm({ tenant }: { tenant: any }) {
             className={styles.submitButton}
             onClick={() => submitFeedback(rating, comment, {
               staff_rating: staffRating,
-              cleanliness_rating: cleanlinessRating,
-              taste_rating: tasteRating,
+              atmosphere_rating: atmosphereRating,
+              quality_rating: qualityRating,
               gender,
               ageRange
             })}
