@@ -12,9 +12,7 @@ interface FeedbackItem {
   staff_rating?: number;
   atmosphere_rating?: number;
   quality_rating?: number;
-  tenants: {
-    name: string;
-  };
+  tenants: { name: string } | { name: string }[] | null;
 }
 
 interface FeedbackListProps {
@@ -22,6 +20,10 @@ interface FeedbackListProps {
 }
 
 type SortField = 'created_at' | 'rating' | 'tenant';
+
+function getTenantName(tenant: FeedbackItem['tenants']) {
+  return (Array.isArray(tenant) ? tenant[0] : tenant)?.name || '';
+}
 
 export default function FeedbackList({ feedback }: FeedbackListProps) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -33,7 +35,7 @@ export default function FeedbackList({ feedback }: FeedbackListProps) {
   const filteredAndSortedFeedback = useMemo(() => {
     return feedback
       .filter((f) => {
-        const searchStr = `${f.tenants?.name || ''} ${f.comment || ''}`.toLowerCase();
+        const searchStr = `${getTenantName(f.tenants)} ${f.comment || ''}`.toLowerCase();
         return searchStr.includes(searchTerm.toLowerCase());
       })
       .sort((a, b) => {
@@ -43,7 +45,7 @@ export default function FeedbackList({ feedback }: FeedbackListProps) {
         } else if (sortField === 'rating') {
           comparison = a.rating - b.rating;
         } else if (sortField === 'tenant') {
-          comparison = (a.tenants?.name || '').localeCompare(b.tenants?.name || '');
+          comparison = getTenantName(a.tenants).localeCompare(getTenantName(b.tenants));
         }
 
         return sortOrder === 'asc' ? comparison : -comparison;
@@ -117,7 +119,7 @@ export default function FeedbackList({ feedback }: FeedbackListProps) {
                 className={f.rating <= 3 ? styles.alertRow : f.rating >= 4 ? styles.positiveRow : ''}
               >
                 <td>{new Date(f.created_at).toLocaleDateString('ja-JP')}</td>
-                <td>{f.tenants?.name}</td>
+                <td>{getTenantName(f.tenants)}</td>
                 <td>
                   <div className={styles.ratingStars}>
                     <div style={{ display: 'flex' }}>
@@ -161,7 +163,7 @@ export default function FeedbackList({ feedback }: FeedbackListProps) {
           >
             <div className={styles.cardHeader}>
               <span className={styles.cardDate}>{new Date(f.created_at).toLocaleDateString('ja-JP')}</span>
-              <span className={styles.cardTenant}>{f.tenants?.name}</span>
+              <span className={styles.cardTenant}>{getTenantName(f.tenants)}</span>
             </div>
             <div className={styles.cardBody}>
               <div className={styles.cardRating}>
