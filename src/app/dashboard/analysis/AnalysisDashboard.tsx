@@ -38,14 +38,13 @@ export default function AnalysisDashboard({ feedback }: AnalysisDashboardProps) 
     const avgAtmosphere = feedback.filter(f => f.atmosphere_rating).reduce((acc, curr) => acc + (curr.atmosphere_rating || 0), 0) / feedback.filter(f => f.atmosphere_rating).length || 0;
     const avgQuality = feedback.filter(f => f.quality_rating).reduce((acc, curr) => acc + (curr.quality_rating || 0), 0) / feedback.filter(f => f.quality_rating).length || 0;
 
-    // Radar Chart Data (Snowflake)
-    const radarData = [
+    const categoryValues = [
       { subject: '接客 (Staff)', A: avgStaff, fullMark: 5 },
       { subject: '雰囲気 (Atmos)', A: avgAtmosphere, fullMark: 5 },
       { subject: '品質 (Quality)', A: avgQuality, fullMark: 5 },
       { subject: '総合 (Overall)', A: avgRating, fullMark: 5 },
-      { subject: '鮮度 (Recency)', A: 4.5, fullMark: 5 }, // Placeholder for volume trend
     ];
+    const radarData = categoryValues.filter((item) => item.A > 0);
 
     // Rating Distribution
     const distribution = [5, 4, 3, 2, 1].map(stars => ({
@@ -56,10 +55,10 @@ export default function AnalysisDashboard({ feedback }: AnalysisDashboardProps) 
 
     // Category Comparison
     const categories = [
-      { name: '接客', score: parseFloat(avgStaff.toFixed(1)) },
-      { name: '雰囲気', score: parseFloat(avgAtmosphere.toFixed(1)) },
-      { name: '品質/技術', score: parseFloat(avgQuality.toFixed(1)) },
-    ];
+      { name: '接客', score: avgStaff, count: feedback.filter(f => f.staff_rating).length },
+      { name: '雰囲気', score: avgAtmosphere, count: feedback.filter(f => f.atmosphere_rating).length },
+      { name: '品質/技術', score: avgQuality, count: feedback.filter(f => f.quality_rating).length },
+    ].filter((category) => category.count > 0).map((category) => ({ name: category.name, score: parseFloat(category.score.toFixed(1)) }));
 
     // Trend (Daily grouping)
     const last7Days = Array.from({ length: 7 }, (_, i) => {
@@ -117,7 +116,7 @@ export default function AnalysisDashboard({ feedback }: AnalysisDashboardProps) 
             <span>パフォーマンス</span>
             <TrendingUp size={16} />
           </div>
-          <div className={styles.statValue}>安定</div>
+          <div className={styles.statValue}>{stats.trendData.reduce((total, day) => total + day.reviews, 0)}件</div>
         </div>
       </div>
 
@@ -197,12 +196,14 @@ export default function AnalysisDashboard({ feedback }: AnalysisDashboardProps) 
         <div className={styles.card}>
           <h2>主要なインサイト</h2>
           <div style={{ marginTop: '1rem' }}>
-            <p style={{ marginBottom: '1rem' }}>
-              <strong>強み:</strong> {stats.categories.reduce((a, b) => a.score > b.score ? a : b).name}が高評価です。
-            </p>
-            <p>
-              <strong>要改善:</strong> {stats.categories.reduce((a, b) => a.score < b.score ? a : b).name}の評価が相対的に低くなっています。
-            </p>
+            {stats.categories.length ? (
+              <>
+                <p style={{ marginBottom: '1rem' }}>
+                  <strong>最も高い項目:</strong> {stats.categories.reduce((a, b) => a.score > b.score ? a : b).name}
+                </p>
+                <p><strong>最も低い項目:</strong> {stats.categories.reduce((a, b) => a.score < b.score ? a : b).name}</p>
+              </>
+            ) : <p>詳細評価データがまだありません。</p>}
           </div>
         </div>
       </div>

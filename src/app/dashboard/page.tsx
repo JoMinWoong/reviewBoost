@@ -1,34 +1,44 @@
-import { supabase } from '@/lib/supabase';
+import { createSupabaseServerClient } from '@/lib/supabase-server';
 import styles from './dashboard.module.css';
 import { Star, MessageSquare, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import FeedbackList from './FeedbackList';
 import ThemeToggle from './ThemeToggle';
+import { signOut } from './actions';
 
 export const revalidate = 0;
 
 export default async function DashboardPage() {
-  // Fetch feedback for all tenants (for now, eventually filter by merchant)
+  const supabase = await createSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect('/login');
+
   const { data: feedback, error } = await supabase
     .from('feedback')
-    .select('*, tenants(name)')
-    .order('created_at', { ascending: false });
+    .select('id, created_at, rating, comment, staff_rating, atmosphere_rating, quality_rating, tenants(name)')
+    .order('created_at', { ascending: false })
+    .limit(500);
 
   if (error) {
     return <div>Error loading dashboard.</div>;
   }
 
-  const avgRating = feedback.length 
-    ? (feedback.reduce((acc, curr) => acc + curr.rating, 0) / feedback.length).toFixed(1)
+  const items = feedback || [];
+  const avgRating = items.length
+    ? (items.reduce((acc, curr) => acc + curr.rating, 0) / items.length).toFixed(1)
     : 0;
 
-  const lowRatings = feedback.filter(f => f.rating <= 3).length;
+  const lowRatings = items.filter(f => f.rating <= 3).length;
 
   return (
     <div className={styles.container}>
       <header className={styles.header}>
         <h1>店舗管理ダッシュボード</h1>
-        <ThemeToggle />
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <ThemeToggle />
+          <form action={signOut}><button type="submit">ログアウト</button></form>
+        </div>
       </header>
 
       <div className={styles.statsGrid}>
@@ -44,7 +54,7 @@ export default async function DashboardPage() {
             <span>総フィードバック数</span>
             <MessageSquare className={styles.icon} />
           </div>
-          <div className={styles.statValue}>{feedback.length}</div>
+          <div className={styles.statValue}>{items.length}</div>
         </div>
         <div className={styles.statCard}>
           <div className={styles.statHeader}>
@@ -63,7 +73,7 @@ export default async function DashboardPage() {
             詳細分析レポートを表示
           </Link>
         </div>
-        <FeedbackList feedback={feedback} />
+        <FeedbackList feedback={items} />
       </section>
     </div>
   );

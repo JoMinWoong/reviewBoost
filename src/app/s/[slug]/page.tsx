@@ -1,15 +1,15 @@
-import { supabase } from "@/lib/supabase";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
 import FeedbackForm from "./FeedbackForm";
 import styles from "./feedback.module.css";
 import { notFound } from "next/navigation";
-import { ShieldCheck, Lock } from "lucide-react";
 
 export default async function FeedbackPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
+  const supabase = await createSupabaseServerClient();
   const { data: tenant, error } = await supabase
-    .from('tenants')
-    .select('*, business_categories(*)')
+    .from('public_tenants')
+    .select('id, slug, name, google_maps_url, tabelog_url')
     .eq('slug', slug)
     .single();
 
@@ -27,17 +27,8 @@ export default async function FeedbackPage({ params }: { params: Promise<{ slug:
       <FeedbackForm tenant={tenant} />
 
       <footer className={styles.footer}>
-        <div className={styles.badgeArea}>
-          <div className={styles.badge}>
-            <ShieldCheck size={16} />
-            <span>SSL暗号化通信</span>
-          </div>
-          <div className={styles.badge}>
-            <Lock size={16} />
-            <span>個人情報の厳重管理</span>
-          </div>
-        </div>
-        <p>© {new Date().getFullYear()} ReviewBoost Japan - 安心の日本語対応サポート</p>
+        <p><a href="/privacy">個人情報の取り扱い</a></p>
+        <p>© {new Date().getFullYear()} ReviewBoost Japan</p>
       </footer>
     </div>
   );

@@ -9,13 +9,9 @@ interface FeedbackItem {
   created_at: string;
   rating: number;
   comment: string | null;
-  nickname: string | null;
-  gender: number | null;
-  age_range: number | null;
   staff_rating?: number;
   atmosphere_rating?: number;
   quality_rating?: number;
-  metadata?: any;
   tenants: {
     name: string;
   };
@@ -37,7 +33,7 @@ export default function FeedbackList({ feedback }: FeedbackListProps) {
   const filteredAndSortedFeedback = useMemo(() => {
     return feedback
       .filter((f) => {
-        const searchStr = `${f.tenants?.name || ''} ${f.comment || ''} ${f.nickname || ''}`.toLowerCase();
+        const searchStr = `${f.tenants?.name || ''} ${f.comment || ''}`.toLowerCase();
         return searchStr.includes(searchTerm.toLowerCase());
       })
       .sort((a, b) => {
@@ -83,7 +79,7 @@ export default function FeedbackList({ feedback }: FeedbackListProps) {
           <Search size={18} className={styles.searchIcon} />
           <input
             type="text"
-            placeholder="店舗名、コメント、ニックネームで検索..."
+            placeholder="店舗名、コメントで検索..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className={styles.searchInput}
@@ -111,12 +107,11 @@ export default function FeedbackList({ feedback }: FeedbackListProps) {
                   評価 <SortIcon field="rating" />
                 </div>
               </th>
-              <th>コメント</th>
-              <th>顧客情報</th>
+              <th>コメント・詳細評価</th>
             </tr>
           </thead>
           <tbody>
-            {displayedFeedback.map((f) => (
+                {displayedFeedback.map((f) => (
               <tr 
                 key={f.id} 
                 className={f.rating <= 3 ? styles.alertRow : f.rating >= 4 ? styles.positiveRow : ''}
@@ -148,30 +143,6 @@ export default function FeedbackList({ feedback }: FeedbackListProps) {
                       {f.staff_rating && <span>接客:{f.staff_rating} </span>}
                       {f.atmosphere_rating && <span>雰囲気:{f.atmosphere_rating} </span>}
                       {f.quality_rating && <span>品質:{f.quality_rating} </span>}
-                    </div>
-                  )}
-                </td>
-                <td>
-                  {f.nickname || '匿名'}
-                  {(f.gender !== null || f.age_range !== null) && (
-                    <div className={styles.detailSummary}>
-                      {f.gender !== null && (
-                        <span>
-                          {f.gender === 0 ? '男性' : 
-                           f.gender === 1 ? '女性' : 
-                           f.gender === 2 ? 'その他' : ''}
-                        </span>
-                      )}
-                      {f.age_range !== null && (
-                        <span>
-                          {f.age_range === 1 ? '10代' :
-                           f.age_range === 2 ? '20代' :
-                           f.age_range === 3 ? '30代' :
-                           f.age_range === 4 ? '40代' :
-                           f.age_range === 5 ? '50代' :
-                           f.age_range === 6 ? '60代以上' : f.age_range}
-                        </span>
-                      )}
                     </div>
                   )}
                 </td>
@@ -219,32 +190,6 @@ export default function FeedbackList({ feedback }: FeedbackListProps) {
                   {f.quality_rating && <span>品質:{f.quality_rating} </span>}
                 </div>
               )}
-            </div>
-            <div className={styles.cardFooter}>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', width: '100%' }}>
-                <span className={styles.cardCustomer}>{f.nickname || '匿名'}</span>
-                {(f.gender !== null || f.age_range !== null) && (
-                  <div className={styles.detailSummary}>
-                    {f.gender !== null && (
-                      <span>
-                        {f.gender === 0 ? '男性' : 
-                         f.gender === 1 ? '女性' : 
-                         f.gender === 2 ? 'その他' : ''}
-                      </span>
-                    )}
-                    {f.age_range !== null && (
-                      <span>
-                        {f.age_range === 1 ? '10代' :
-                         f.age_range === 2 ? '20代' :
-                         f.age_range === 3 ? '30代' :
-                         f.age_range === 4 ? '40代' :
-                         f.age_range === 5 ? '50代' :
-                         f.age_range === 6 ? '60代以上' : f.age_range}
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
             </div>
           </div>
         ))}

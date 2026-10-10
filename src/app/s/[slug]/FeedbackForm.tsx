@@ -2,36 +2,19 @@
 
 import { useState } from 'react';
 import { Star } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
 import styles from './feedback.module.css';
-
-interface Tenant {
-  id: string;
-  name: string;
-  google_maps_url: string;
-  tabelog_url: string;
-}
 
 export default function FeedbackForm({ tenant }: { tenant: any }) {
   const [rating, setRating] = useState<number>(0);
   const [hover, setHover] = useState<number>(0);
   const [comment, setComment] = useState('');
-  const [nickname, setNickname] = useState('');
-  const [gender, setGender] = useState<number | ''>('');
-  const [ageRange, setAgeRange] = useState<number | ''>('');
   const [staffRating, setStaffRating] = useState<number>(0);
   const [atmosphereRating, setAtmosphereRating] = useState<number>(0);
   const [qualityRating, setQualityRating] = useState<number>(0);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [redeemed, setRedeemed] = useState(false);
 
-  const category = tenant.business_categories || {};
-  const labels = {
-    staff: category.staff_label || '接客 (Staff)',
-    atmosphere: category.atmosphere_label || '雰囲気 (Atmosphere)',
-    quality: category.quality_label || '品質 (Quality)'
-  };
+  const labels = { staff: '接客', atmosphere: '雰囲気', quality: '品質' };
 
   const handleRatingClick = (r: number) => {
     setRating(r);
@@ -48,46 +31,35 @@ export default function FeedbackForm({ tenant }: { tenant: any }) {
 
     setLoading(true);
     try {
-      const { error } = await supabase.from('feedback').insert({
-        tenant_id: tenant.id,
-        rating: r,
-        comment: c,
-        staff_rating: extra.staff_rating,
-        atmosphere_rating: extra.atmosphere_rating,
-        quality_rating: extra.quality_rating,
-        nickname: nickname,
-        gender: gender,
-        age_range: ageRange,
-        metadata: {
-          ...extra,
-          category: tenant.category
-        },
+      const response = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tenantId: tenant.id,
+          rating: r,
+          comment: c,
+          staffRating: extra.staff_rating || null,
+          atmosphereRating: extra.atmosphere_rating || null,
+          qualityRating: extra.quality_rating || null,
+        }),
       });
-
-      if (error) throw error;
+      if (!response.ok) {
+        const body = await response.json();
+        throw new Error(body.error || '送信できませんでした。');
+      }
       setSubmitted(true);
-    } catch (err: any) {
-      console.error('Error submitting feedback:', err);
-      if (err.message) {
-        console.error('Error message:', err.message);
-      }
-      if (err.details) {
-        console.error('Error details:', err.details);
-      }
-      if (err.hint) {
-        console.error('Error hint:', err.hint);
-      }
-      alert(`送信に失敗しました。理由: ${err.message || '不明なエラー'}`);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : '送信できませんでした。時間をおいて再度お試しください。');
     } finally {
       setLoading(false);
     }
   };
 
-  if (submitted && rating >= 4) {
+  if (submitted) {
     return (
       <div className={styles.redirectArea}>
-        <h2>高評価をありがとうございます！</h2>
-        <p>よろしければ、Googleマップや食べログでも感想をシェアしていただけませんか？</p>
+        <h2>フィードバックありがとうございます</h2>
+        <p>よろしければ、公開レビューもご検討ください。投稿するかどうかは自由です。</p>
         
         {tenant.google_maps_url && (
           <a href={tenant.google_maps_url} target="_blank" rel="noopener noreferrer" className={styles.redirectButton}>
@@ -101,73 +73,6 @@ export default function FeedbackForm({ tenant }: { tenant: any }) {
           </a>
         )}
 
-        <div className={styles.couponArea}>
-          <p className={styles.couponTitle}>ご協力感謝クーポン</p>
-          {!redeemed ? (
-            <button
-              className={styles.redeemButton}
-              onClick={() => {
-                if (window.confirm('スタッフに提示する際に「OK」を押してください。')) {
-                  setRedeemed(true);
-                }
-              }}
-            >
-              クーポンを表示する
-            </button>
-          ) : (
-            <>
-              <p>次回ご来店時にスタッフへご提示ください</p>
-              <div className={styles.couponCode}>WELCOME5OFF</div>
-              <p className={styles.couponDescription}>お会計から5% OFF</p>
-            </>
-          )}
-        </div>
-
-        <div className={styles.ctaArea}>
-          <h3>最新情報はこちらから</h3>
-          <p>新メニューや限定クーポンをInstagramで配信中！</p>
-          <a href="#" className={styles.ctaButton}>
-            Instagramをチェックする
-          </a>
-        </div>
-      </div>
-    );
-  }
-
-  if (submitted && rating <= 3) {
-    return (
-      <div className={styles.container}>
-        <h2>フィードバックありがとうございます</h2>
-        <p>貴重なご意見として、改善に役立てさせていただきます。</p>
-        <div className={styles.couponArea}>
-          <p className={styles.couponTitle}>ご協力感謝クーポン</p>
-          {!redeemed ? (
-            <button
-              className={styles.redeemButton}
-              onClick={() => {
-                if (window.confirm('スタッフに提示する際に「OK」を押してください。')) {
-                  setRedeemed(true);
-                }
-              }}
-            >
-              クーポンを表示する
-            </button>
-          ) : (
-            <>
-              <p>次回ご来店時にスタッフへご提示ください</p>
-              <div className={styles.couponCode}>THANKYOU100</div>
-              <p className={styles.couponDescription}>次回ドリンク1杯無料</p>
-            </>
-          )}
-        </div>
-
-        <div className={styles.ctaArea}>
-          <h3>最新情報はこちらから</h3>
-          <p>新メニューや限定クーポンをInstagramで配信中！</p>
-          <a href="#" className={styles.ctaButton}>
-            Instagramをチェックする
-          </a>
-        </div>
       </div>
     );
   }
@@ -175,9 +80,11 @@ export default function FeedbackForm({ tenant }: { tenant: any }) {
   return (
     <div>
       <p className={styles.disclaimer}>「このご意見は一般公開されません」</p>
+      <p>回答は店舗オーナーと共有します。オーナーがAI改善相談を実行した場合、コメントがOpenAIに送信されることがあります。ニックネームや年齢などは収集しません。<a href="/privacy">個人情報の取り扱い</a></p>
       <div className={styles.starRating}>
         {[1, 2, 3, 4, 5].map((s) => (
-          <button
+            <button
+            type="button"
             key={s}
             className={styles.starButton}
             onClick={() => handleRatingClick(s)}
@@ -257,48 +164,15 @@ export default function FeedbackForm({ tenant }: { tenant: any }) {
             className={styles.textArea}
             placeholder={rating >= 4 ? "よろしければ感想をお聞かせください..." : "その他のご意見..."}
             value={comment}
+            maxLength={2000}
             onChange={(e) => setComment(e.target.value)}
           />
-          <input
-            className={styles.inputField}
-            placeholder="ニックネーム（最大10文字）"
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value.slice(0, 10))}
-            maxLength={10}
-          />
-          <div className={styles.optionalGrid}>
-            <select 
-              className={styles.selectField} 
-              value={gender} 
-              onChange={(e) => setGender(e.target.value === '' ? '' : parseInt(e.target.value))}
-            >
-              <option value="">性別（任意）</option>
-              <option value="0">男性</option>
-              <option value="1">女性</option>
-              <option value="2">その他</option>
-            </select>
-            <select 
-              className={styles.selectField} 
-              value={ageRange} 
-              onChange={(e) => setAgeRange(e.target.value === '' ? '' : parseInt(e.target.value))}
-            >
-              <option value="">年代（任意）</option>
-              <option value="1">10代</option>
-              <option value="2">20代</option>
-              <option value="3">30代</option>
-              <option value="4">40代</option>
-              <option value="5">50代</option>
-              <option value="6">60代以上</option>
-            </select>
-          </div>
           <button
             className={styles.submitButton}
             onClick={() => submitFeedback(rating, comment, {
               staff_rating: staffRating,
               atmosphere_rating: atmosphereRating,
-              quality_rating: qualityRating,
-              gender,
-              ageRange
+              quality_rating: qualityRating
             })}
             disabled={loading}
           >

@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -42,8 +43,12 @@ next-env.d.ts
 
 .idea
 *.env
+# Keep plans and repository documentation local; do not commit Markdown files.
+/PLAN.md
 *.md
 *.sql
+!supabase/migrations/*.sql
+!supabase/setup.sql
 *.png
 
 gstack
