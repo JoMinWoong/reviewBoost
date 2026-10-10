@@ -14,7 +14,7 @@ export default async function AnalysisPage() {
 
   const { data: feedback, error } = await supabase
     .from('feedback')
-    .select('created_at, rating, staff_rating, atmosphere_rating, quality_rating')
+    .select('id, created_at, rating, staff_rating, atmosphere_rating, quality_rating')
     .order('created_at', { ascending: false })
     .limit(500);
 
